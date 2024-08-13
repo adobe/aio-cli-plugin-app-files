@@ -49,7 +49,7 @@
   "main": "src/commands/app/state/index.js",
   "scripts": {
     "lint": "eslint src test e2e",
-    "unit-test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --setupFilesAfterEnv=./test/jest.setup.js --testRegex '.+\\.test\\.js' --ci",
+    "unit-test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --setupFilesAfterEnv=./test/jest.setup.js --testMatch='**/*.test.js' --ci",
     "test": "npm run unit-test && npm run lint",
     "prepack": "oclif manifest && oclif readme --no-aliases",
     "postpack": "rm -f oclif.manifest.json",
