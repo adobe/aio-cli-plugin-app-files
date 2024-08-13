@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,65 +9,66 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import { BaseCommand } from '../../../BaseCommand.js'
+import { Flags } from '@oclif/core'
+import chalk from 'chalk'
 
-const BaseCommand = require('../../../BaseCommand')
-// const aioLogger = require('@adobe/aio-lib-core-logging')('app-files', { provider: 'debug' })
-const fetch = require('node-fetch')
-const ActionPaths = require('../../../actionPaths')
+const MAX_KEYS = 5000
+const COUNT_HINT = 500 // per iteration
 
-const stateAPIUrl = ActionPaths['state-list']
-
-class ListCommand extends BaseCommand {
+export class List extends BaseCommand {
   async run () {
-    // const { flags } = this.parse(ListCommand)
-    let config
-    try {
-      config = this.getAppConfig()
-    } catch (e) { }
+    const allKeys = []
 
-    if (!config || !config.app || !config.app.hasBackend) {
-      this.error('This command is expected to be run in the root of a Firefly app project.')
+    const { match } = this.flags
+
+    let truncatedKeys = null
+    for await (const { keys } of this.state.list({ match, countHint: COUNT_HINT })) {
+      if (keys.length + allKeys.length > MAX_KEYS) {
+        truncatedKeys = keys.slice(0, MAX_KEYS - allKeys.length)
+        break
+      }
+      allKeys.push(...keys)
+      this.logKeys(keys)
     }
-
-    const auth = config.ow.auth
-    const namespace = config.ow.namespace
-
-    const creds = await this.getAccessTokenAndOrgId()
-
-    const res = await fetch(stateAPIUrl, {
-      method: 'post',
-      headers: {
-        Authorization: 'bearer ' + creds.accessToken,
-        'Content-Type': 'application/json',
-        'x-gw-ims-org-id': creds.ims_org_id
-      },
-      body:
-        JSON.stringify({
-          owNamespace: namespace,
-          owAuth: auth
-        })
-    })
-
-    const result = await res.json()
-    if (res.status !== 200) {
-      this.error(result.error)
+    if (truncatedKeys) {
+      allKeys.push(...truncatedKeys)
+      this.logKeys(truncatedKeys)
+      this.warn(chalk.yellow(`Too many keys found, only the first ${MAX_KEYS} keys are displayed\nUse --match to filter keys`))
     }
-    this.log(JSON.stringify(result))
+    return allKeys // --json
+  }
+
+  logKeys (keys) {
+    // do not log unnecessary new lines
+    keys.length && this.log(keys.join('\n'))
   }
 }
 
-// ListCommand.flags = {
-
-// }
-
-ListCommand.description = 'List keys in store'
-ListCommand.examples = [
-  '$ aio app state list'
+List.description = 'List key-values'
+List.examples = [
+  '$ aio app state list',
+  '$ aio app state list --match \'gl*b\'',
+  '$ aio app state list --json',
+  '$ aio app state list | less',
+  '$ aio app state list | wc -l'
 ]
 
-ListCommand.aliases = [
-  'app:state:list',
+List.flags = {
+  ...BaseCommand.flags,
+  match: Flags.string({
+    name: 'match',
+    char: 'm',
+    description: 'Glob-like pattern to filter keys',
+    required: false,
+    default: '*'
+  })
+}
+
+List.aliases = [
+  'app:state:list'
+]
+// do not show in help
+List.hiddenAliases = [
   'app:state:ls'
 ]
-
-module.exports = ListCommand

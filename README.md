@@ -1,247 +1,220 @@
-# aio-cli-plugin-app-files
+# aio-cli-plugin-app-state
 
-Project Firefly Services management from the [aio CLI](https://github.com/adobe/aio-cli):
+The CLI Plugin to manage your App Builder State storage.
 
-- Files storage via the [Files SDK](https://github.com/adobe/aio-lib-files)
-- State store via the [State SDK](https://github.com/adobe/aio-lib-state)
-
-**Note:** this extension requires a backend service to be installed in your Adobe IMS enterprise org.
-These commands are only available if you have already deployed the [Project Firefly App Stash](https://github.com/adobe/aio-app-stash) in your Adobe IMS enterprise org.
+If you need to access State programmatically, check the
+[@adobe/aio-lib-state](https://github.com/adobe/aio-lib-state) library.
 
 ---
-
-Firefly app file storage commands for the Adobe I/O CLI
-
 <!-- toc -->
-* [aio-cli-plugin-boilerplate](#aio-cli-plugin-boilerplate)
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
 
 # Usage
+
 ```sh-session
-$ aio plugins:install -g @adobe/aio-cli-plugin-app-files
+$ aio plugins:install @adobe/aio-cli-plugin-app-state
 $ # OR
-$ aio app files --help
+$ aio discover -i
+$ aio app state --help
 ```
 
 # Commands
 <!-- commands -->
-* [`aio app:files`](#aio-appfiles)
-* [`aio app:files:delete FILE`](#aio-appfilesdelete-file)
-* [`aio app:files:get PATH`](#aio-appfilesget-path)
-* [`aio app:files:list`](#aio-appfileslist)
-* [`aio app:files:write FILEPATH [DATA]`](#aio-appfileswrite-filepath-data)
-* [`aio app:state`](#aio-appstate)
-* [`aio app:state:delete KEY`](#aio-appstatedelete-key)
-* [`aio app:state:get KEY`](#aio-appstateget-key)
-* [`aio app:state:list`](#aio-appstatelist)
-* [`aio app:state:set KEY VALUE`](#aio-appstateset-key-value)
+* [`aio app state delete [KEYS]`](#aio-app-state-delete-keys)
+* [`aio app state get KEY`](#aio-app-state-get-key)
+* [`aio app state list`](#aio-app-state-list)
+* [`aio app state put KEY VALUE`](#aio-app-state-put-key-value)
+* [`aio app state stats`](#aio-app-state-stats)
+* [`aio help [COMMAND]`](#aio-help-command)
 
-## `aio app:files`
+## `aio app state delete [KEYS]`
 
-Execute app file commands
+Delete key-values
 
 ```
 USAGE
-  $ aio app:files
-
-OPTIONS
-  -v, --verbose  Verbose output
-  --version      Show version
-
-ALIASES
-  $ aio app:files
-```
-
-## `aio app:files:delete FILE`
-
-Delete files in file storage
-
-```
-USAGE
-  $ aio app:files:delete FILE
+  $ aio app state delete [KEYS...] [--json] [--region amer|emea] [--match <value>] [--force]
 
 ARGUMENTS
-  FILE  file path to delete
+  KEYS...  keys to delete. Above 5 keys, you will be prompted for confirmation
 
-OPTIONS
-  -v, --verbose  Verbose output
-  --version      Show version
+FLAGS
+  --force            [use with caution!] force delete, no safety prompt
+  --match=<value>    [use with caution!] deletes ALL key-values matching the provided glob-like pattern
+  --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
+                     <options: amer|emea>
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Delete key-values
 
 ALIASES
-  $ aio app:files:delete
+  $ aio app state delete
 
-EXAMPLE
-  $ aio app files delete some-file.txt
+EXAMPLES
+  $ aio app state delete key
+
+  $ aio app state delete key1 key2 key3
+
+  $ aio app state delete --match 'gl*b'
+
+  $ aio app state delete --match 'gl*b' --json
+
+  $ aio app state delete --match 'be-carreful*' --force
 ```
 
-## `aio app:files:get PATH`
+## `aio app state get KEY`
 
-Get details for files in file storage
+Get a key-value
 
 ```
 USAGE
-  $ aio app:files:get PATH
+  $ aio app state get KEY [--json] [--region amer|emea]
 
 ARGUMENTS
-  PATH  file path to get
+  KEY  State key
 
-OPTIONS
-  -v, --verbose  Verbose output
-  --version      Show version
+FLAGS
+  --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
+                     <options: amer|emea>
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Get a key-value
 
 ALIASES
-  $ aio app:files:get
+  $ aio app state get
 
-EXAMPLE
-  $ aio app files get some-file.txt
+EXAMPLES
+  $ aio app state get key
+
+  $ aio app state get key --json
+
+  $ aio app state get key | wc -c
 ```
 
-## `aio app:files:list`
+## `aio app state list`
 
-List files in file storage
+List key-values
 
 ```
 USAGE
-  $ aio app:files:list
+  $ aio app state list [--json] [--region amer|emea] [-m <value>]
 
-OPTIONS
-  -j, --json       output json data
-  -l, --list       output a formatted list
-  -p, --path=path  [default: /] file path to list
+FLAGS
+  -m, --match=<value>    [default: *] Glob-like pattern to filter keys
+      --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
+                         <options: amer|emea>
 
-ALIASES
-  $ aio app:files:list
+GLOBAL FLAGS
+  --json  Format output as json.
 
-EXAMPLE
-  $ aio app files list
-```
-
-## `aio app:files:write FILEPATH [DATA]`
-
-Get details for files in file storage
-
-```
-USAGE
-  $ aio app:files:write FILEPATH [DATA]
-
-ARGUMENTS
-  FILEPATH  file path to write to
-  DATA      data to write to the file, or path to a src file
-
-OPTIONS
-  -f, --src=src  file path for src
+DESCRIPTION
+  List key-values
 
 ALIASES
-  $ aio app:files:write
-
-EXAMPLE
-  $ aio app files get some-file.txt
-```
-
-## `aio app:state`
-
-Execute app state commands
-
-```
-USAGE
-  $ aio app:state
-
-OPTIONS
-  -v, --verbose  Verbose output
-  --version      Show version
-
-ALIASES
-  $ aio app:state
-```
-
-## `aio app:state:delete KEY`
-
-delete key+value from state store
-
-```
-USAGE
-  $ aio app:state:delete KEY
-
-ARGUMENTS
-  KEY  state key to delete
-
-OPTIONS
-  -v, --verbose  Verbose output
-  --version      Show version
-
-ALIASES
-  $ aio app:state:delete
-  $ aio app:state:del
-
-EXAMPLE
-  $ aio app state delete some-key
-```
-
-## `aio app:state:get KEY`
-
-Get values for keys in state store
-
-```
-USAGE
-  $ aio app:state:get KEY
-
-ARGUMENTS
-  KEY  state key to get
-
-OPTIONS
-  -v, --verbose  Verbose output
-  --version      Show version
-
-ALIASES
-  $ aio app:state:get
-
-EXAMPLE
-  $ aio app state get some-key
-```
-
-## `aio app:state:list`
-
-List keys in store
-
-```
-USAGE
-  $ aio app:state:list
-
-OPTIONS
-  -v, --verbose  Verbose output
-  --version      Show version
-
-ALIASES
-  $ aio app:state:list
-  $ aio app:state:ls
-
-EXAMPLE
   $ aio app state list
+
+EXAMPLES
+  $ aio app state list
+
+  $ aio app state list --match 'gl*b'
+
+  $ aio app state list --json
+
+  $ aio app state list | less
+
+  $ aio app state list | wc -l
 ```
 
-## `aio app:state:set KEY VALUE`
+## `aio app state put KEY VALUE`
 
-set value for key in state store
+Put a key-value
 
 ```
 USAGE
-  $ aio app:state:set KEY VALUE
+  $ aio app state put KEY VALUE [--json] [--region amer|emea] [-t <value>]
 
 ARGUMENTS
-  KEY    state key to set
-  VALUE  value to set
+  KEY    State key
+  VALUE  State value
 
-OPTIONS
-  -t, --ttl=ttl  [default: 86400] time to live, expiry in seconds, default is 24 hours, -1 for no expiry
+FLAGS
+  -t, --ttl=<value>      Time to live in seconds
+      --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
+                         <options: amer|emea>
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Put a key-value
 
 ALIASES
-  $ aio app:state:set
+  $ aio app state put
 
-EXAMPLE
-  $ aio app state set some-key "Some value"
+EXAMPLES
+  $ aio app state put key value
+
+  $ aio app state put key value --ttl 3600
+
+  $ aio app state put key value --json
+
+  $ cat value/from/file | xargs -0 ./bin/run.js app state put key
 ```
+
+## `aio app state stats`
+
+Display stats
+
+```
+USAGE
+  $ aio app state stats [--json] [--region amer|emea]
+
+FLAGS
+  --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
+                     <options: amer|emea>
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Display stats
+
+ALIASES
+  $ aio app state stats
+
+EXAMPLES
+  $ aio app state stats
+
+  $ aio app state stats --json
+```
+
+## `aio help [COMMAND]`
+
+Display help for aio.
+
+```
+USAGE
+  $ aio help [COMMAND...] [-n]
+
+ARGUMENTS
+  COMMAND...  Command to show help for.
+
+FLAGS
+  -n, --nested-commands  Include all nested commands in the output.
+
+DESCRIPTION
+  Display help for aio.
+```
+
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.6/src/commands/help.ts)_
 <!-- commandsstop -->
 
 ## Contributing

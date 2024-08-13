@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,20 +9,20 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const execa = require('execa')
-const chalk = require('chalk')
-const { stdout } = require('stdout-stderr')
-const fs = require('fs')
+import { expect } from '@jest/globals'
+import { execa } from 'execa'
 
-stdout.print = true
+const uniqueToken = Date.now() + Math.floor(Math.random() * 10)
+test('state put get list delete', async () => {
+  const key = `test.cli.${uniqueToken}`
+  const value = '0123456789'
 
-test('boilerplate help test', async () => {
-  const packagejson = JSON.parse(fs.readFileSync('package.json').toString())
-  const name = `${packagejson.name}`
-  console.log(chalk.blue(`> e2e tests for ${chalk.bold(name)}`))
-
-  console.log(chalk.dim('    - boilerplate help ..'))
-  expect(() => { execa.sync('./bin/run', ['--help'], { stderr: 'inherit' }) }).not.toThrow()
-
-  console.log(chalk.green(`    - done for ${chalk.bold(name)}`))
+  const putRes = await execa('./bin/run.js', ['app', 'state', 'put', key, value])
+  expect(putRes.stdout).toEqual(key)
+  const getRes = await execa('./bin/run.js', ['app', 'state', 'get', key])
+  expect(getRes.stdout).toEqual(value)
+  const listRes = await execa('./bin/run.js', ['app', 'state', 'list', '--json', '--match', 'test.cli.*'])
+  expect(JSON.parse(listRes.stdout)).toContain(key)
+  const deleteRes = await execa('./bin/run.js', ['app', 'state', 'delete', key, '--json'])
+  expect(JSON.parse(deleteRes.stdout)).toEqual({ keys: 1 })
 })
