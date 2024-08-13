@@ -1,4 +1,4 @@
-# aio-cli-plugin-app-state
+# aio-cli-plugin-app-storage
 
 The CLI Plugin to manage your App Builder State storage.
 
@@ -14,7 +14,7 @@ If you need to access State programmatically, check the
 # Usage
 
 ```sh-session
-$ aio plugins:install @adobe/aio-cli-plugin-app-state
+$ aio plugins:install @adobe/aio-cli-plugin-app-storage
 $ # OR
 $ aio discover -i
 $ aio app state --help
@@ -22,12 +22,17 @@ $ aio app state --help
 
 # Commands
 <!-- commands -->
-* [`aio app state delete [KEYS]`](#aio-app-state-delete-keys)
-* [`aio app state get KEY`](#aio-app-state-get-key)
-* [`aio app state list`](#aio-app-state-list)
-* [`aio app state put KEY VALUE`](#aio-app-state-put-key-value)
-* [`aio app state stats`](#aio-app-state-stats)
-* [`aio help [COMMAND]`](#aio-help-command)
+- [aio-cli-plugin-app-storage](#aio-cli-plugin-app-storage)
+- [Usage](#usage)
+- [Commands](#commands)
+  - [`aio app state delete [KEYS]`](#aio-app-state-delete-keys)
+  - [`aio app state get KEY`](#aio-app-state-get-key)
+  - [`aio app state list`](#aio-app-state-list)
+  - [`aio app state put KEY VALUE`](#aio-app-state-put-key-value)
+  - [`aio app state stats`](#aio-app-state-stats)
+  - [`aio help [COMMAND]`](#aio-help-command)
+  - [Contributing](#contributing)
+  - [Licensing](#licensing)
 
 ## `aio app state delete [KEYS]`
 

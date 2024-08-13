@@ -1,5 +1,5 @@
 {
-  "name": "@adobe/aio-cli-plugin-app-state",
+  "name": "@adobe/aio-cli-plugin-app-storage",
   "version": "0.1.0",
   "dependencies": {
     "@adobe/aio-lib-core-config": "^5",
@@ -46,7 +46,7 @@
       "@oclif/plugin-help"
     ]
   },
-  "main": "src/commands/app/state/index.js",
+  "main": "src/commands/BaseCommand.js",
   "scripts": {
     "lint": "eslint src test e2e",
     "unit-test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --setupFilesAfterEnv=./test/jest.setup.js --testMatch='**/*.test.js' --ci",
