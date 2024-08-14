@@ -7,6 +7,7 @@ If you need to access State programmatically, check the
 
 ---
 <!-- toc -->
+* [aio-cli-plugin-app-storage](#aio-cli-plugin-app-storage)
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
@@ -22,17 +23,12 @@ $ aio app state --help
 
 # Commands
 <!-- commands -->
-- [aio-cli-plugin-app-storage](#aio-cli-plugin-app-storage)
-- [Usage](#usage)
-- [Commands](#commands)
-  - [`aio app state delete [KEYS]`](#aio-app-state-delete-keys)
-  - [`aio app state get KEY`](#aio-app-state-get-key)
-  - [`aio app state list`](#aio-app-state-list)
-  - [`aio app state put KEY VALUE`](#aio-app-state-put-key-value)
-  - [`aio app state stats`](#aio-app-state-stats)
-  - [`aio help [COMMAND]`](#aio-help-command)
-  - [Contributing](#contributing)
-  - [Licensing](#licensing)
+* [`aio app state delete [KEYS]`](#aio-app-state-delete-keys)
+* [`aio app state get KEY`](#aio-app-state-get-key)
+* [`aio app state list`](#aio-app-state-list)
+* [`aio app state put KEY VALUE`](#aio-app-state-put-key-value)
+* [`aio app state stats`](#aio-app-state-stats)
+* [`aio help [COMMAND]`](#aio-help-command)
 
 ## `aio app state delete [KEYS]`
 
@@ -151,7 +147,7 @@ ARGUMENTS
   VALUE  State value
 
 FLAGS
-  -t, --ttl=<value>      Time to live in seconds
+  -t, --ttl=<value>      Time to live in seconds. Default is 86400 (24 hours), max is 31536000 (1 year).
       --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
                          <options: amer|emea>
 
@@ -219,7 +215,7 @@ DESCRIPTION
   Display help for aio.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.6/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.8/src/commands/help.ts)_
 <!-- commandsstop -->
 
 ## Contributing

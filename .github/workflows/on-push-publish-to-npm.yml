@@ -9,7 +9,7 @@ on:
 
 jobs:
   publish:
-    if: github.repository == 'adobe/aio-cli-plugin-app-state'
+    if: github.repository == 'adobe/aio-cli-plugin-app-storage'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
