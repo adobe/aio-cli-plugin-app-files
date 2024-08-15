@@ -1,5 +1,5 @@
 /*
-Copyright 2019 Adobe. All rights reserved.
+Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,73 +10,87 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { Command, flags } = require('@oclif/command')
-const fs = require('fs-extra')
-const chalk = require('chalk')
-const coreConfig = require('@adobe/aio-lib-core-config')
-const DEFAULT_LAUNCH_PREFIX = 'https://experience.adobe.com/?devMode=true#/custom-apps/?localDevUrl='
-const loadConfig = require('./lib/config-loader')
+import { Command, Flags } from '@oclif/core'
+import config from '@adobe/aio-lib-core-config'
+import AioLogger from '@adobe/aio-lib-core-logging'
 
-const { getToken } = require('@adobe/aio-lib-ims')
-const { CLI } = require('@adobe/aio-lib-ims/src/context')
+import { CONFIG_STATE_REGION } from './constants.js'
+import chalk from 'chalk'
 
-class BaseCommand extends Command {
-  getAppConfig () {
-    if (!this.appConfig) {
-      this.appConfig = loadConfig()
+export class BaseCommand extends Command {
+  async init () {
+    await super.init()
+
+    // setup debug logger
+    const command = this.constructor.name.toLowerCase() // hacky but convenient
+    this.debugLogger = AioLogger(
+      `aio:app:state:${command}`,
+      { provider: 'debug' }
+    )
+    // override warn to stderr
+    this.warn = (msg) => process.stderr.write(chalk.yellow(`> Warning: ${msg.split('\n').join('\n> ')}\n`))
+
+    // parse flags and args
+    const { flags, args } = await this.parse(this.prototype)
+    this.flags = flags
+    this.args = args
+    this.debugLogger.debug(`${command} args=${JSON.stringify(this.args)} flags=${JSON.stringify(this.flags)}`)
+
+    // init state client
+    const owOptions = {
+      namespace: config.get('runtime.namespace'),
+      auth: config.get('runtime.auth')
     }
-    return this.appConfig
-  }
-
-  // this was added to get a login context, or force a login if it is not present
-  // this is the only change that was made to this file, otherwise copied from aio-cli-plugin-app/
-  async getAccessTokenAndOrgId () {
-    const creds = {
-      accessToken: await getToken(CLI),
-      ims_org_id: coreConfig.get('project.org.ims_org_id')
-    } // note: looks like we can just use: config.imsOrgId for this
-    return creds
-  }
-
-  getLaunchUrlPrefix () {
-    // todo: it might make sense to have a value that defines if this is an ExC hosted app, or otherwise
-    // so we can decide what type of url to return here.
-    // at some point we could also just delete the .env value and return our expected url here.
-
-    // note: this is the same value as process.env.AIO_LAUNCH_URL_PREFIX
-    let launchPrefix = coreConfig.get('launch.url.prefix')
-    if (launchPrefix) {
-      if (launchPrefix.includes('/myapps/') || launchPrefix.includes('/apps/')) {
-        this.log(chalk.redBright(chalk.bold('Warning: your environment variables contains an older version of AIO_LAUNCH_URL_PREFIX')))
-        launchPrefix = launchPrefix.replace('/myapps/', '/custom-apps/')
-        launchPrefix = launchPrefix.replace('/apps/', '/custom-apps/')
-        this.log(chalk.redBright(chalk.bold(`You should update your .env file: AIO_LAUNCH_URL_PREFIX='${launchPrefix}'`)))
-      }
+    if (!(owOptions.namespace && owOptions.auth)) {
+      this.error(
+`This command is expected to be run in the root of a App Builder app project.
+  Please make sure the 'AIO_RUNTIME_NAMESPACE' and 'AIO_RUNTIME_AUTH' environment variables are configured.`
+      )
     }
-    return (launchPrefix || DEFAULT_LAUNCH_PREFIX)
-  }
+    const region = flags.region || config.get(CONFIG_STATE_REGION) || 'amer'
+    this.debugLogger.info('using state region: %s', region)
 
-  get pjson () {
-    if (!this._pjson) {
-      this._pjson = fs.readJSONSync('package.json')
+    if (config.get('state.endpoint')) {
+      process.env.AIO_STATE_ENDPOINT = config.get('state.endpoint')
+      this.debugLogger.info('using custom endpoint: %s', process.env.AIO_STATE_ENDPOINT)
     }
-    return this._pjson
+    // dynamic import to be able to reload the AIO_STATE_ENDPOINT var
+    // eslint-disable-next-line node/no-unsupported-features/es-syntax
+    const State = await import('@adobe/aio-lib-state')
+
+    /** @type {import('@adobe/aio-lib-state').AdobeState} */
+    this.state = await State.init({ region, ow: owOptions })
+
+    this.rtNamespace = owOptions.namespace
   }
 
-  get appName () {
-    return this.pjson.name
-  }
+  async catch (error) {
+    this.debugLogger.error(error) // debug log with stack trace
 
-  get appVersion () {
-    return this.pjson.version
+    if (error.message.includes('User force closed the prompt')) {
+      // CTRL +C on a prompt, do not log an error message
+      this.exit(2)
+    }
+
+    if (this.flags?.json) {
+      process.stderr.write(JSON.stringify(this.toErrorJson(error.message)) + '\n')
+      this.exit(2)
+    }
+    this.error(error.message)
   }
 }
+
+// Set to true if you want to add the --json flag to your command.
+// oclif will automatically suppress logs (if you use this.log, this.warn, or this.error) and
+// display the JSON returned by the command's run method.
+BaseCommand.enableJsonFlag = true
 
 BaseCommand.flags = {
-  verbose: flags.boolean({ char: 'v', description: 'Verbose output' }),
-  version: flags.boolean({ description: 'Show version' })
+  region: Flags.string({
+    description: 'State region. Defaults to \'AIO_STATE_REGION\' env or \'amer\' if neither is set.',
+    required: false,
+    options: ['amer', 'emea']
+  })
 }
 
-BaseCommand.args = []
-
-module.exports = BaseCommand
+BaseCommand.args = {}

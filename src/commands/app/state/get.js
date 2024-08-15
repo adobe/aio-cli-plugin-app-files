@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,71 +9,47 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import chalk from 'chalk'
+import { BaseCommand } from '../../../BaseCommand.js'
+import { Args } from '@oclif/core'
 
-const BaseCommand = require('../../../BaseCommand')
-// const aioLogger = require('@adobe/aio-lib-core-logging')('app-files', { provider: 'debug' })
-const fetch = require('node-fetch')
-const ActionPaths = require('../../../actionPaths')
-
-const stateAPIUrl = ActionPaths['state-get']
-
-class GetCommand extends BaseCommand {
+export class Get extends BaseCommand {
   async run () {
-    const { args } = this.parse(GetCommand)
-    let config
-    try {
-      config = this.getAppConfig()
-    } catch (e) { }
+    const ret = await this.state.get(this.args.key)
 
-    if (!config || !config.app || !config.app.hasBackend) {
-      this.error('This command is expected to be run in the root of a Firefly app project.')
+    if (!ret) {
+      // and not value = key does not exist
+      this.error('key does not exist')
     }
 
-    const auth = config.ow.auth
-    const namespace = config.ow.namespace
+    const { value, expiration } = ret
 
-    const creds = await this.getAccessTokenAndOrgId()
-
-    const res = await fetch(stateAPIUrl, {
-      method: 'post',
-      headers: {
-        Authorization: 'bearer ' + creds.accessToken,
-        'Content-Type': 'application/json',
-        'x-gw-ims-org-id': creds.ims_org_id
-      },
-      body:
-        JSON.stringify({
-          owNamespace: namespace,
-          owAuth: auth,
-          key: args.key
-        })
-    })
-
-    const result = await res.json()
-    if (res.status !== 200) {
-      this.error(result.error)
+    if (!this.flags.json) {
+      // we write ONLY the value to stdout for pipe-ability (no new line)
+      process.stdout.write(value)
+      // the rest goes to stderr
+      process.stderr.write(chalk.dim(`\n> expiration: ${(new Date(expiration)).toLocaleString()} (local time)\n`))
     }
-    this.log(JSON.stringify(result))
+
+    return { value, expiration } // --json { value, expiration UTC }
   }
 }
 
-// GetCommand.flags = {
-
-// }
-
-GetCommand.description = 'Get values for keys in state store'
-GetCommand.examples = [
-  '$ aio app state get some-key'
+Get.description = 'Get a key-value'
+Get.examples = [
+  '$ aio app state get key',
+  '$ aio app state get key --json',
+  '$ aio app state get key | wc -c'
 ]
 
-GetCommand.args = [{
-  name: 'key',
-  required: true,
-  description: 'state key to get'
-}]
+Get.args = {
+  key: Args.string({
+    name: 'key',
+    description: 'State key',
+    required: true
+  })
+}
 
-GetCommand.aliases = [
+Get.aliases = [
   'app:state:get'
 ]
-
-module.exports = GetCommand

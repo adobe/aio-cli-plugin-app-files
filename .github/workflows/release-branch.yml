@@ -1,0 +1,12 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# this is meant for pull-requests who have a base branch as a release branch (prefix release-) and will run the unit-tests npm script
+
+name: Release Branch CI
+
+on:
+  pull_request:
+    branches: ["release-*", "branch-prerelease"]
+
+jobs:
+  build:
+    uses: adobe/aio-reusable-workflows/.github/workflows/release-branch.yml@main

@@ -10,4 +10,5 @@ rem the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRES
 rem OF ANY KIND, either express or implied. See the License for the specific language
 rem governing permissions and limitations under the License.
 
-node "%~dp0\run" %*
+
+node "%~dp0\dev" %*
