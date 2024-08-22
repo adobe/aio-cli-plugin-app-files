@@ -16,10 +16,13 @@ import AioLogger from '@adobe/aio-lib-core-logging'
 
 import { CONFIG_STATE_REGION } from './constants.js'
 import chalk from 'chalk'
+import semver from 'semver'
 
 export class BaseCommand extends Command {
   async init () {
     await super.init()
+    // eslint-disable-next-line node/no-unsupported-features/es-syntax
+    const { readFile } = await import('fs') // dynamic import to be able to mock fs, ESM and Jest are not friends
 
     // setup debug logger
     const command = this.constructor.name.toLowerCase() // hacky but convenient
@@ -35,6 +38,23 @@ export class BaseCommand extends Command {
     this.flags = flags
     this.args = args
     this.debugLogger.debug(`${command} args=${JSON.stringify(this.args)} flags=${JSON.stringify(this.flags)}`)
+
+    // check application dependencies
+    let packageJson
+    try {
+      const file = await readFile('package.json')
+      packageJson = JSON.parse(file.toString())
+    } catch (e) {
+      this.debugLogger.debug('package.json not found, skipping dependency check')
+    }
+    if (packageJson) {
+      const aioLibStateVersion = packageJson.dependencies?.['@adobe/aio-lib-state']
+      const aioSdkVersion = packageJson.dependencies?.['@adobe/aio-sdk']
+      if ((aioLibStateVersion && semver.lt(semver.coerce(aioLibStateVersion), '4.0.0')) ||
+        (aioSdkVersion && semver.lt(semver.coerce(aioSdkVersion), '6.0.0'))) {
+        this.error('State commands are not available for legacy State, please migrate to "@adobe/aio-lib-state" > 4.0.0 (or "@adobe/aio-sdk" > 6.0.0).')
+      }
+    }
 
     // init state client
     const owOptions = {

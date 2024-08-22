@@ -9,11 +9,14 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { jest } from '@jest/globals'
+import { beforeEach, jest } from '@jest/globals'
 import { stdout, stderr } from 'stdout-stderr'
 import config from '@adobe/aio-lib-core-config'
-
 jest.setTimeout(10000)
+
+jest.unstable_mockModule('fs', async () => ({
+  readFile: () => { throw new Error('fake error no file') }
+}))
 
 // NOTE: if not wrapped in beforeAll/afterAll this may end up timing out random tests.... jest bug?
 beforeAll(async () => {

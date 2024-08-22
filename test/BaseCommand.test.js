@@ -25,6 +25,11 @@ describe('prototype', () => {
   })
 })
 
+const mockReadFile = jest.fn()
+jest.unstable_mockModule('fs', async () => ({
+  readFile: mockReadFile
+}))
+
 describe('init', () => {
   let command
   beforeEach(async () => {
@@ -32,6 +37,49 @@ describe('init', () => {
     command.config = {
       runHook: jest.fn().mockResolvedValue({})
     }
+    mockReadFile.mockReset()
+    mockReadFile.mockResolvedValue(JSON.stringify({
+      dependencies: {
+        '@adobe/aio-lib-state': '^4',
+        '@adobe/aio-sdk': '^6'
+      }
+    }))
+  })
+
+  test('dependencies not declared', async () => {
+    command.argv = []
+    mockReadFile.mockResolvedValue(JSON.stringify({
+      dependencies: {}
+    }))
+    // ignores
+    await expect(command.init()).resolves.toBeUndefined()
+
+    mockReadFile.mockResolvedValue(JSON.stringify({}))
+    // ignores
+    await expect(command.init()).resolves.toBeUndefined()
+  })
+
+  test('package.json not exist', async () => {
+    command.argv = []
+    mockReadFile.mockRejectedValue('some error')
+    // ignores
+    await expect(command.init()).resolves.toBeUndefined()
+  })
+
+  test('aio-lib-state dependency < 4', async () => {
+    command.argv = []
+    mockReadFile.mockResolvedValue(JSON.stringify({
+      dependencies: { '@adobe/aio-lib-state': '^3' }
+    }))
+    await expect(command.init()).rejects.toThrow('State commands are not available for legacy State, please migrate to "@adobe/aio-lib-state" > 4.0.0 (or "@adobe/aio-sdk" > 6.0.0).')
+  })
+
+  test('aio-sdk dependency < 6', async () => {
+    command.argv = []
+    mockReadFile.mockResolvedValue(JSON.stringify({
+      dependencies: { '@adobe/aio-sdk': '^5' }
+    }))
+    await expect(command.init()).rejects.toThrow('State commands are not available for legacy State, please migrate to "@adobe/aio-lib-state" > 4.0.0 (or "@adobe/aio-sdk" > 6.0.0).')
   })
 
   test('missing namespace', async () => {
