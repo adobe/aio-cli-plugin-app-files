@@ -14,7 +14,7 @@ import { stdout, stderr } from 'stdout-stderr'
 import config from '@adobe/aio-lib-core-config'
 jest.setTimeout(10000)
 
-jest.unstable_mockModule('fs', async () => ({
+jest.unstable_mockModule('fs/promises', async () => ({
   readFile: () => { throw new Error('fake error no file') }
 }))
 

@@ -22,7 +22,7 @@ export class BaseCommand extends Command {
   async init () {
     await super.init()
     // eslint-disable-next-line node/no-unsupported-features/es-syntax
-    const { readFile } = await import('fs') // dynamic import to be able to mock fs, ESM and Jest are not friends
+    const { readFile } = await import('fs/promises') // dynamic import to be able to mock fs, ESM and Jest are not friends
 
     // setup debug logger
     const command = this.constructor.name.toLowerCase() // hacky but convenient
@@ -52,7 +52,7 @@ export class BaseCommand extends Command {
       const aioSdkVersion = packageJson.dependencies?.['@adobe/aio-sdk']
       if ((aioLibStateVersion && semver.lt(semver.coerce(aioLibStateVersion), '4.0.0')) ||
         (aioSdkVersion && semver.lt(semver.coerce(aioSdkVersion), '6.0.0'))) {
-        this.error('State commands are not available for legacy State, please migrate to "@adobe/aio-lib-state" > 4.0.0 (or "@adobe/aio-sdk" > 6.0.0).')
+        this.error('State commands are not available for legacy State, please migrate to the latest "@adobe/aio-lib-state" (or "@adobe/aio-sdk" >= 6.0.0).')
       }
     }
 
