@@ -23,17 +23,12 @@ $ aio app state --help
 
 # Commands
 <!-- commands -->
-- [aio-cli-plugin-app-storage](#aio-cli-plugin-app-storage)
-- [Usage](#usage)
-- [Commands](#commands)
-  - [`aio app state delete [KEYS]`](#aio-app-state-delete-keys)
-  - [`aio app state get KEY`](#aio-app-state-get-key)
-  - [`aio app state list`](#aio-app-state-list)
-  - [`aio app state put KEY VALUE`](#aio-app-state-put-key-value)
-  - [`aio app state stats`](#aio-app-state-stats)
-  - [`aio help [COMMAND]`](#aio-help-command)
-  - [Contributing](#contributing)
-  - [Licensing](#licensing)
+* [`aio app state delete [KEYS]`](#aio-app-state-delete-keys)
+* [`aio app state get KEY`](#aio-app-state-get-key)
+* [`aio app state list`](#aio-app-state-list)
+* [`aio app state put KEY VALUE`](#aio-app-state-put-key-value)
+* [`aio app state stats`](#aio-app-state-stats)
+* [`aio help [COMMAND]`](#aio-help-command)
 
 ## `aio app state delete [KEYS]`
 
@@ -59,9 +54,7 @@ DESCRIPTION
   Delete key-values
 
 ALIASES
-  $ aio app state del
-  $ aio app state remove
-  $ aio app state rm
+  $ aio app state delete
 
 EXAMPLES
   $ aio app state delete key
@@ -96,6 +89,9 @@ GLOBAL FLAGS
 DESCRIPTION
   Get a key-value
 
+ALIASES
+  $ aio app state get
+
 EXAMPLES
   $ aio app state get key
 
@@ -124,7 +120,7 @@ DESCRIPTION
   List key-values
 
 ALIASES
-  $ aio app state ls
+  $ aio app state list
 
 EXAMPLES
   $ aio app state list
@@ -161,6 +157,9 @@ GLOBAL FLAGS
 DESCRIPTION
   Put a key-value
 
+ALIASES
+  $ aio app state put
+
 EXAMPLES
   $ aio app state put key value
 
@@ -188,6 +187,9 @@ GLOBAL FLAGS
 
 DESCRIPTION
   Display stats
+
+ALIASES
+  $ aio app state stats
 
 EXAMPLES
   $ aio app state stats
