@@ -46,7 +46,10 @@
     "repositoryPrefix": "<%- repo %>/blob/<%- version %>/<%- commandPath %>",
     "plugins": [
       "@oclif/plugin-help"
-    ]
+    ],
+    "helpOptions": {
+      "hideAliasesFromRoot": true
+    }
   },
   "main": "src/commands/BaseCommand.js",
   "scripts": {

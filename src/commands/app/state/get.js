@@ -49,7 +49,3 @@ Get.args = {
     required: true
   })
 }
-
-Get.aliases = [
-  'app:state:get'
-]

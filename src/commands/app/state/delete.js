@@ -112,10 +112,6 @@ Delete.flags = {
 }
 
 Delete.aliases = [
-  'app:state:delete'
-]
-
-Delete.hiddenAliases = [
   'app:state:del',
   'app:state:remove',
   'app:state:rm'

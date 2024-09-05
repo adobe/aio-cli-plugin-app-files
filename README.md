@@ -23,12 +23,56 @@ $ aio app state --help
 
 # Commands
 <!-- commands -->
+* [`aio app state del [KEYS]`](#aio-app-state-del-keys)
 * [`aio app state delete [KEYS]`](#aio-app-state-delete-keys)
 * [`aio app state get KEY`](#aio-app-state-get-key)
 * [`aio app state list`](#aio-app-state-list)
+* [`aio app state ls`](#aio-app-state-ls)
 * [`aio app state put KEY VALUE`](#aio-app-state-put-key-value)
+* [`aio app state remove [KEYS]`](#aio-app-state-remove-keys)
+* [`aio app state rm [KEYS]`](#aio-app-state-rm-keys)
 * [`aio app state stats`](#aio-app-state-stats)
 * [`aio help [COMMAND]`](#aio-help-command)
+
+## `aio app state del [KEYS]`
+
+Delete key-values
+
+```
+USAGE
+  $ aio app state del [KEYS...] [--json] [--region amer|emea] [--match <value>] [--force]
+
+ARGUMENTS
+  KEYS...  keys to delete. Above 5 keys, you will be prompted for confirmation
+
+FLAGS
+  --force            [use with caution!] force delete, no safety prompt
+  --match=<value>    [use with caution!] deletes ALL key-values matching the provided glob-like pattern
+  --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
+                     <options: amer|emea>
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Delete key-values
+
+ALIASES
+  $ aio app state del
+  $ aio app state remove
+  $ aio app state rm
+
+EXAMPLES
+  $ aio app state delete key
+
+  $ aio app state delete key1 key2 key3
+
+  $ aio app state delete --match 'gl*b'
+
+  $ aio app state delete --match 'gl*b' --json
+
+  $ aio app state delete --match 'be-carreful*' --force
+```
 
 ## `aio app state delete [KEYS]`
 
@@ -54,7 +98,9 @@ DESCRIPTION
   Delete key-values
 
 ALIASES
-  $ aio app state delete
+  $ aio app state del
+  $ aio app state remove
+  $ aio app state rm
 
 EXAMPLES
   $ aio app state delete key
@@ -89,9 +135,6 @@ GLOBAL FLAGS
 DESCRIPTION
   Get a key-value
 
-ALIASES
-  $ aio app state get
-
 EXAMPLES
   $ aio app state get key
 
@@ -120,7 +163,41 @@ DESCRIPTION
   List key-values
 
 ALIASES
+  $ aio app state ls
+
+EXAMPLES
   $ aio app state list
+
+  $ aio app state list --match 'gl*b'
+
+  $ aio app state list --json
+
+  $ aio app state list | less
+
+  $ aio app state list | wc -l
+```
+
+## `aio app state ls`
+
+List key-values
+
+```
+USAGE
+  $ aio app state ls [--json] [--region amer|emea] [-m <value>]
+
+FLAGS
+  -m, --match=<value>    [default: *] Glob-like pattern to filter keys
+      --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
+                         <options: amer|emea>
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  List key-values
+
+ALIASES
+  $ aio app state ls
 
 EXAMPLES
   $ aio app state list
@@ -157,9 +234,6 @@ GLOBAL FLAGS
 DESCRIPTION
   Put a key-value
 
-ALIASES
-  $ aio app state put
-
 EXAMPLES
   $ aio app state put key value
 
@@ -168,6 +242,86 @@ EXAMPLES
   $ aio app state put key value --json
 
   $ cat value/from/file | xargs -0 ./bin/run.js app state put key
+```
+
+## `aio app state remove [KEYS]`
+
+Delete key-values
+
+```
+USAGE
+  $ aio app state remove [KEYS...] [--json] [--region amer|emea] [--match <value>] [--force]
+
+ARGUMENTS
+  KEYS...  keys to delete. Above 5 keys, you will be prompted for confirmation
+
+FLAGS
+  --force            [use with caution!] force delete, no safety prompt
+  --match=<value>    [use with caution!] deletes ALL key-values matching the provided glob-like pattern
+  --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
+                     <options: amer|emea>
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Delete key-values
+
+ALIASES
+  $ aio app state del
+  $ aio app state remove
+  $ aio app state rm
+
+EXAMPLES
+  $ aio app state delete key
+
+  $ aio app state delete key1 key2 key3
+
+  $ aio app state delete --match 'gl*b'
+
+  $ aio app state delete --match 'gl*b' --json
+
+  $ aio app state delete --match 'be-carreful*' --force
+```
+
+## `aio app state rm [KEYS]`
+
+Delete key-values
+
+```
+USAGE
+  $ aio app state rm [KEYS...] [--json] [--region amer|emea] [--match <value>] [--force]
+
+ARGUMENTS
+  KEYS...  keys to delete. Above 5 keys, you will be prompted for confirmation
+
+FLAGS
+  --force            [use with caution!] force delete, no safety prompt
+  --match=<value>    [use with caution!] deletes ALL key-values matching the provided glob-like pattern
+  --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
+                     <options: amer|emea>
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Delete key-values
+
+ALIASES
+  $ aio app state del
+  $ aio app state remove
+  $ aio app state rm
+
+EXAMPLES
+  $ aio app state delete key
+
+  $ aio app state delete key1 key2 key3
+
+  $ aio app state delete --match 'gl*b'
+
+  $ aio app state delete --match 'gl*b' --json
+
+  $ aio app state delete --match 'be-carreful*' --force
 ```
 
 ## `aio app state stats`
@@ -187,9 +341,6 @@ GLOBAL FLAGS
 
 DESCRIPTION
   Display stats
-
-ALIASES
-  $ aio app state stats
 
 EXAMPLES
   $ aio app state stats

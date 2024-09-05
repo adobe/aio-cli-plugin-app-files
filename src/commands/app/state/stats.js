@@ -30,7 +30,3 @@ Stats.examples = [
   '$ aio app state stats',
   '$ aio app state stats --json'
 ]
-
-Stats.aliases = [
-  'app:state:stats'
-]

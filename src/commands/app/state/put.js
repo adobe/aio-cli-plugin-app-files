@@ -62,7 +62,3 @@ Put.flags = {
     required: false
   })
 }
-
-Put.aliases = [
-  'app:state:put'
-]
