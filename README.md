@@ -54,7 +54,9 @@ DESCRIPTION
   Delete key-values
 
 ALIASES
-  $ aio app state delete
+  $ aio app state del
+  $ aio app state remove
+  $ aio app state rm
 
 EXAMPLES
   $ aio app state delete key
@@ -89,9 +91,6 @@ GLOBAL FLAGS
 DESCRIPTION
   Get a key-value
 
-ALIASES
-  $ aio app state get
-
 EXAMPLES
   $ aio app state get key
 
@@ -120,7 +119,7 @@ DESCRIPTION
   List key-values
 
 ALIASES
-  $ aio app state list
+  $ aio app state ls
 
 EXAMPLES
   $ aio app state list
@@ -157,9 +156,6 @@ GLOBAL FLAGS
 DESCRIPTION
   Put a key-value
 
-ALIASES
-  $ aio app state put
-
 EXAMPLES
   $ aio app state put key value
 
@@ -188,9 +184,6 @@ GLOBAL FLAGS
 DESCRIPTION
   Display stats
 
-ALIASES
-  $ aio app state stats
-
 EXAMPLES
   $ aio app state stats
 
@@ -215,7 +208,7 @@ DESCRIPTION
   Display help for aio.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.10/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.11/src/commands/help.ts)_
 <!-- commandsstop -->
 
 ## Contributing
