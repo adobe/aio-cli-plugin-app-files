@@ -66,9 +66,5 @@ List.flags = {
 }
 
 List.aliases = [
-  'app:state:list'
-]
-// do not show in help
-List.hiddenAliases = [
   'app:state:ls'
 ]

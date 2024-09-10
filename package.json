@@ -46,7 +46,10 @@
     "repositoryPrefix": "<%- repo %>/blob/<%- version %>/<%- commandPath %>",
     "plugins": [
       "@oclif/plugin-help"
-    ]
+    ],
+    "helpOptions": {
+      "hideAliasesFromRoot": true
+    }
   },
   "main": "src/commands/BaseCommand.js",
   "scripts": {
@@ -55,7 +58,7 @@
     "test": "npm run unit-test && npm run lint",
     "prepack": "oclif manifest && oclif readme --no-aliases",
     "postpack": "rm -f oclif.manifest.json",
-    "version": "oclif readme && git add README.md",
+    "version": "oclif readme --no-aliases && git add README.md",
     "e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --collectCoverage=false --testRegex 'e2e/e2e.js'"
   },
   "jest": {
