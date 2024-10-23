@@ -36,7 +36,7 @@ Delete key-values
 
 ```
 USAGE
-  $ aio app state delete [KEYS...] [--json] [--region amer|emea] [--match <value>] [--force]
+  $ aio app state delete [KEYS...] [--json] [--region amer|emea|apac] [--match <value>] [--force]
 
 ARGUMENTS
   KEYS...  keys to delete. Above 5 keys, you will be prompted for confirmation
@@ -45,7 +45,7 @@ FLAGS
   --force            [use with caution!] force delete, no safety prompt
   --match=<value>    [use with caution!] deletes ALL key-values matching the provided glob-like pattern
   --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
-                     <options: amer|emea>
+                     <options: amer|emea|apac>
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -76,14 +76,14 @@ Get a key-value
 
 ```
 USAGE
-  $ aio app state get KEY [--json] [--region amer|emea]
+  $ aio app state get KEY [--json] [--region amer|emea|apac]
 
 ARGUMENTS
   KEY  State key
 
 FLAGS
   --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
-                     <options: amer|emea>
+                     <options: amer|emea|apac>
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -105,12 +105,12 @@ List key-values
 
 ```
 USAGE
-  $ aio app state list [--json] [--region amer|emea] [-m <value>]
+  $ aio app state list [--json] [--region amer|emea|apac] [-m <value>]
 
 FLAGS
   -m, --match=<value>    [default: *] Glob-like pattern to filter keys
       --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
-                         <options: amer|emea>
+                         <options: amer|emea|apac>
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -139,7 +139,7 @@ Put a key-value
 
 ```
 USAGE
-  $ aio app state put KEY VALUE [--json] [--region amer|emea] [-t <value>]
+  $ aio app state put KEY VALUE [--json] [--region amer|emea|apac] [-t <value>]
 
 ARGUMENTS
   KEY    State key
@@ -148,7 +148,7 @@ ARGUMENTS
 FLAGS
   -t, --ttl=<value>      Time to live in seconds. Default is 86400 (24 hours), max is 31536000 (1 year).
       --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
-                         <options: amer|emea>
+                         <options: amer|emea|apac>
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -172,11 +172,11 @@ Display stats
 
 ```
 USAGE
-  $ aio app state stats [--json] [--region amer|emea]
+  $ aio app state stats [--json] [--region amer|emea|apac]
 
 FLAGS
   --region=<option>  State region. Defaults to 'AIO_STATE_REGION' env or 'amer' if neither is set.
-                     <options: amer|emea>
+                     <options: amer|emea|apac>
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -208,7 +208,7 @@ DESCRIPTION
   Display help for aio.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.11/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.16/src/commands/help.ts)_
 <!-- commandsstop -->
 
 ## Contributing
