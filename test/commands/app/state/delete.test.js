@@ -35,7 +35,7 @@ describe('prototype', () => {
   })
   test('flags', () => {
     expect(Object.keys(Delete.flags).sort()).toEqual(['force', 'match', 'region'])
-    expect(Delete.flags.region.options).toEqual(['amer', 'emea'])
+    expect(Delete.flags.region.options).toEqual(['amer', 'emea', 'apac'])
     expect(Delete.enableJsonFlag).toEqual(true)
   })
 })
